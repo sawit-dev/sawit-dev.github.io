@@ -1,6 +1,7 @@
 import type { ReactNode } from "react"
 import { ArrowUpRight, MessageCircle } from "lucide-react"
 import { siGithub } from "simple-icons"
+import { Separator } from "@workspace/ui/components/separator"
 import { BrandIcon } from "../brand-icon"
 
 type ChannelIcon = (props: { size: number }) => ReactNode
@@ -31,30 +32,32 @@ export function ContactOptions() {
         <p className="font-mono text-xs tracking-[0.16em] text-primary uppercase">
           Ways to connect
         </p>
-        <div className="mt-8 divide-y divide-border border-y border-border">
-          {channels.map(({ icon: Icon, label, detail, href }) => (
-            <a
-              key={label}
-              className="group flex items-center gap-4 py-6"
-              href={href}
-              target="_blank"
-              rel="noreferrer"
-            >
-              <span className="flex size-10 shrink-0 items-center justify-center border border-border text-primary">
-                <Icon size={18} />
-              </span>
-              <span className="flex-1">
-                <span className="block font-medium">{label}</span>
-                <span className="mt-1 block text-sm text-muted-foreground">
-                  {detail}
+        <div className="mt-8 border-y border-border">
+          {channels.map(({ icon: Icon, label, detail, href }, index) => (
+            <div key={label}>
+              <a
+                className="group flex items-center gap-4 py-6"
+                href={href}
+                target="_blank"
+                rel="noreferrer"
+              >
+                <span className="flex size-10 shrink-0 items-center justify-center border border-border text-primary">
+                  <Icon size={18} />
                 </span>
-              </span>
-              <ArrowUpRight
-                aria-hidden="true"
-                className="text-muted-foreground transition-transform group-hover:translate-x-0.5 group-hover:-translate-y-0.5"
-                size={17}
-              />
-            </a>
+                <span className="flex-1">
+                  <span className="block font-medium">{label}</span>
+                  <span className="mt-1 block text-sm text-muted-foreground">
+                    {detail}
+                  </span>
+                </span>
+                <ArrowUpRight
+                  aria-hidden="true"
+                  className="text-muted-foreground transition-transform group-hover:translate-x-0.5 group-hover:-translate-y-0.5"
+                  size={17}
+                />
+              </a>
+              {index < channels.length - 1 && <Separator />}
+            </div>
           ))}
         </div>
       </div>

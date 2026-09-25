@@ -1,4 +1,5 @@
 import { ArrowRight } from "lucide-react"
+import { Button } from "@workspace/ui/components/button"
 import { Link } from "react-router"
 
 export function HomeContactCta() {
@@ -17,13 +18,14 @@ export function HomeContactCta() {
             public channels.
           </p>
         </div>
-        <Link
-          className="inline-flex shrink-0 items-center gap-2 text-sm font-medium underline underline-offset-4"
-          to="/contact"
+        <Button
+          render={<Link to="/contact" />}
+          variant="secondary"
+          className="shrink-0"
         >
           Find the links
           <ArrowRight aria-hidden="true" size={16} />
-        </Link>
+        </Button>
       </div>
     </section>
   )
