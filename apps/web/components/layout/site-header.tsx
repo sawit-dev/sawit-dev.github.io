@@ -73,7 +73,7 @@ export function SiteHeader() {
   }, [isOpen])
 
   return (
-    <header className="relative z-50 border-b border-border/70 bg-background/90 backdrop-blur-xl">
+    <header className="relative z-50 border-b border-border/70 bg-background">
       <div className="mx-auto flex h-16 max-w-6xl items-center justify-between px-5 lg:px-8">
         <NavLink
           to="/"
@@ -117,38 +117,42 @@ export function SiteHeader() {
         </div>
       </div>
 
-      {isOpen && (
-        <div className="fixed inset-x-0 top-16 bottom-0 z-40 bg-background md:hidden">
-          <nav
-            ref={mobileNavRef}
-            id={mobileMenuId}
-            aria-label="Mobile navigation"
-            aria-hidden={!isOpen}
-            className="flex h-full flex-col justify-start bg-background px-5 pt-6 pb-8 transition-all duration-200 ease-out"
-          >
-            <div role="menu" className="flex w-full flex-col gap-2">
-              {navigation.map((item) => (
-                <NavLink
-                  key={item.to}
-                  to={item.to}
-                  role="menuitem"
-                  className={({ isActive }) =>
-                    `flex items-center justify-between py-3 text-[clamp(2rem,7vw,3.5rem)] leading-none tracking-[-0.06em] transition-colors ${
-                      isActive ? "text-foreground" : "text-foreground/90"
-                    }`
-                  }
-                  onClick={() => setIsOpen(false)}
-                >
-                  <span>{item.label}</span>
-                  <span className="text-2xl leading-none text-foreground/70">
-                    ›
-                  </span>
-                </NavLink>
-              ))}
-            </div>
-          </nav>
-        </div>
-      )}
+      <div
+        className={`fixed inset-x-0 top-16 bottom-0 z-[60] bg-background md:hidden ${
+          isOpen
+            ? "pointer-events-auto visible translate-y-0 opacity-100"
+            : "pointer-events-none invisible -translate-y-4 opacity-0"
+        } transition-[transform,opacity,visibility] duration-300 ease-out`}
+      >
+        <nav
+          ref={mobileNavRef}
+          id={mobileMenuId}
+          aria-label="Mobile navigation"
+          aria-hidden={!isOpen}
+          className="flex h-full flex-col justify-start bg-background px-5 pt-6 pb-8"
+        >
+          <div role="menu" className="flex w-full flex-col gap-2">
+            {navigation.map((item) => (
+              <NavLink
+                key={item.to}
+                to={item.to}
+                role="menuitem"
+                className={({ isActive }) =>
+                  `flex items-center justify-between py-3 text-[clamp(2rem,7vw,3.5rem)] leading-none transition-colors ${
+                    isActive ? "text-foreground" : "text-foreground/90"
+                  }`
+                }
+                onClick={() => setIsOpen(false)}
+              >
+                <span>{item.label}</span>
+                <span className="text-2xl leading-none text-foreground/70">
+                  ›
+                </span>
+              </NavLink>
+            ))}
+          </div>
+        </nav>
+      </div>
     </header>
   )
 }

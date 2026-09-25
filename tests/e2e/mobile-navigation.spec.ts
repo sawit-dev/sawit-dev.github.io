@@ -4,7 +4,7 @@ import { expect, test, type Page, type TestInfo } from "@playwright/test"
 async function captureNavigationReference(
   page: Page,
   testInfo: TestInfo,
-  name: string,
+  name: string
 ) {
   const header = page.locator("header").first()
   const navigation = page.locator("nav:visible").last()
@@ -14,8 +14,12 @@ async function captureNavigationReference(
       height: window.innerHeight,
       devicePixelRatio: window.devicePixelRatio,
     },
-    stylesheets: Array.from(document.styleSheets).map((stylesheet) => stylesheet.href),
-    scripts: Array.from(document.scripts).map((script) => script.src || "inline"),
+    stylesheets: Array.from(document.styleSheets).map(
+      (stylesheet) => stylesheet.href
+    ),
+    scripts: Array.from(document.scripts).map(
+      (script) => script.src || "inline"
+    ),
   }))
   const elements = await Promise.all(
     [header, navigation].map(async (locator) => ({
@@ -38,7 +42,7 @@ async function captureNavigationReference(
           zIndex: computed.zIndex,
         }
       }),
-    })),
+    }))
   )
 
   await page.screenshot({
@@ -48,11 +52,13 @@ async function captureNavigationReference(
   })
   await writeFile(
     testInfo.outputPath(`${name}.json`),
-    JSON.stringify({ ...reference, elements }, null, 2),
+    JSON.stringify({ ...reference, elements }, null, 2)
   )
 }
 
-test("mobile navigation opens without shifting page content", async ({ page }) => {
+test("mobile navigation opens without shifting page content", async ({
+  page,
+}) => {
   await page.goto("/")
 
   const main = page.locator("main")
@@ -81,7 +87,9 @@ test("mobile navigation opens without shifting page content", async ({ page }) =
     page.getByRole("button", { name: "Open navigation" })
   ).toBeVisible()
   await expect(page.locator("body")).not.toHaveCSS("overflow", "hidden")
-  await expect(page.getByRole("button", { name: "Open navigation" })).toBeFocused()
+  await expect(
+    page.getByRole("button", { name: "Open navigation" })
+  ).toBeFocused()
 })
 
 test("closes mobile navigation after route navigation", async ({ page }) => {
@@ -91,8 +99,12 @@ test("closes mobile navigation after route navigation", async ({ page }) => {
   await page.getByRole("menuitem", { name: "About" }).click()
 
   await expect(page).toHaveURL(/\/about$/)
-  await expect(page.getByRole("navigation", { name: "Mobile navigation" })).toBeHidden()
-  await expect(page.getByRole("button", { name: "Open navigation" })).toBeVisible()
+  await expect(
+    page.getByRole("navigation", { name: "Mobile navigation" })
+  ).toBeHidden()
+  await expect(
+    page.getByRole("button", { name: "Open navigation" })
+  ).toBeVisible()
 })
 
 test("resets mobile navigation when switching to desktop", async ({ page }) => {
@@ -101,23 +113,35 @@ test("resets mobile navigation when switching to desktop", async ({ page }) => {
 
   await page.setViewportSize({ width: 1024, height: 768 })
 
-  await expect(page.getByRole("button", { name: "Open navigation" })).toBeHidden()
-  await expect(page.getByRole("navigation", { name: "Mobile navigation" })).toBeHidden()
+  await expect(
+    page.getByRole("button", { name: "Open navigation" })
+  ).toBeHidden()
+  await expect(
+    page.getByRole("navigation", { name: "Mobile navigation" })
+  ).toBeHidden()
   await expect(page.locator("body")).not.toHaveCSS("overflow", "hidden")
 })
 
-test("captures Vercel and local mobile navigation references", async ({ page }, testInfo) => {
+test("captures Vercel and local mobile navigation references", async ({
+  page,
+}, testInfo) => {
   await page.goto("https://vercel.com", { waitUntil: "domcontentloaded" })
   const vercelMenu = page.locator('button[aria-label="Open menu"]')
   await expect(vercelMenu).toBeVisible({ timeout: 20000 })
   await vercelMenu.click()
-  await captureNavigationReference(page, testInfo, "vercel-mobile-nav-reference")
+  await captureNavigationReference(
+    page,
+    testInfo,
+    "vercel-mobile-nav-reference"
+  )
 
   await page.goto("http://localhost:5173")
   const localMenuButton = page.getByRole("button", { name: /open navigation/i })
   await expect(localMenuButton).toBeVisible({ timeout: 20000 })
   await localMenuButton.click()
-  const localMobileNav = page.getByRole("navigation", { name: "Mobile navigation" })
+  const localMobileNav = page.getByRole("navigation", {
+    name: "Mobile navigation",
+  })
   await expect(localMobileNav).toBeVisible()
   await captureNavigationReference(page, testInfo, "local-mobile-nav-reference")
 })
