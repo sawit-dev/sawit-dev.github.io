@@ -17,22 +17,33 @@ export function getSystemTheme(): Exclude<Theme, "system"> {
     : "light"
 }
 
+function getStoredTheme(storageKey: string): Theme | null {
+  if (typeof window === "undefined") {
+    return null
+  }
+
+  const storedTheme = window.localStorage.getItem(storageKey)
+  return storedTheme === "light" ||
+    storedTheme === "dark" ||
+    storedTheme === "system"
+    ? storedTheme
+    : null
+}
+
 export function useThemePreference(
   defaultTheme: Theme = "system",
   storageKey = "sawit-dev-theme"
 ) {
-  const [theme, setThemeState] = React.useState<Theme>(defaultTheme)
+  const [theme, setThemeState] = React.useState<Theme>(
+    () => getStoredTheme(storageKey) ?? defaultTheme
+  )
 
   React.useEffect(() => {
-    const storedTheme = window.localStorage.getItem(storageKey) as Theme | null
-    if (
-      storedTheme === "light" ||
-      storedTheme === "dark" ||
-      storedTheme === "system"
-    ) {
+    const storedTheme = getStoredTheme(storageKey)
+    if (storedTheme && storedTheme !== theme) {
       setThemeState(storedTheme)
     }
-  }, [storageKey])
+  }, [storageKey, theme])
 
   React.useEffect(() => {
     const root = window.document.documentElement
