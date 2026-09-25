@@ -21,17 +21,12 @@ export function ThemeToggle() {
       size="sm"
       spacing={0}
       aria-label="Choose color theme"
-      onValueChange={(values) => {
-        const value = values[0]
-        if (value === "system" || value === "light" || value === "dark") {
-          setTheme(value)
-        }
-      }}
     >
       {themes.map(({ value, label, icon: Icon }) => (
         <ToggleGroupItem
           key={value}
           value={value}
+          onClick={() => setTheme(value)}
           aria-pressed={theme === value}
           aria-label={label}
           title={label}
