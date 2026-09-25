@@ -35,7 +35,7 @@ export function DnsCheckerResults({ results }: { results: DnsLookupResult[] }) {
         </p>
       </div>
 
-      <article className="border border-border bg-card p-5">
+      <article className="min-w-0 border border-border bg-card p-5">
         <div className="space-y-5">
           {results.map((result) => (
             <div key={result.providerId} className="rounded-md border border-border p-4">
@@ -61,7 +61,9 @@ export function DnsCheckerResults({ results }: { results: DnsLookupResult[] }) {
                       </div>
                       <div className="mt-2 grid gap-2 sm:grid-cols-[120px_1fr]">
                         <dt className="text-muted-foreground">Value</dt>
-                        <dd className="break-all font-mono text-xs">{answer.data}</dd>
+                        <dd className="min-w-0 overflow-x-auto rounded-md border border-border/80 bg-muted/10 px-2 py-1.5 font-mono text-xs">
+                          <span className="block min-w-[220px] break-all">{answer.data}</span>
+                        </dd>
                       </div>
                       <div className="mt-2 grid gap-2 sm:grid-cols-[120px_1fr]">
                         <dt className="text-muted-foreground">TTL</dt>

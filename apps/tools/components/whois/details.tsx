@@ -1,9 +1,12 @@
-import type { ReactNode } from "react"
-
 import type { RdapRecord } from "../../lib/rdap/types"
 
 type WhoisDetailsProps = {
   result: RdapRecord
+}
+
+type FlattenedRow = {
+  key: string
+  value: string
 }
 
 function humanizeKey(key: string) {
@@ -28,79 +31,55 @@ function formatDateValue(value?: string) {
   }).format(date)
 }
 
-function formatPrimitive(value: unknown): string {
-  if (typeof value === "string") {
-    return value
-  }
-
-  if (typeof value === "number" || typeof value === "boolean") {
-    return String(value)
-  }
-
-  if (value === null || value === undefined) {
-    return "Not returned"
-  }
-
+function normalizeValue(value: unknown): string {
+  if (typeof value === "string") return value
+  if (typeof value === "number" || typeof value === "boolean") return String(value)
+  if (value === null || value === undefined) return "Not returned"
   return JSON.stringify(value)
 }
 
-function renderValue(value: unknown, depth = 0): ReactNode {
-  if (Array.isArray(value)) {
-    if (value.length === 0) return "No entries"
+function flattenEntries(
+  object: Record<string, unknown>,
+  parentKey = "",
+  rows: FlattenedRow[] = []
+): FlattenedRow[] {
+  for (const [key, value] of Object.entries(object)) {
+    const label = parentKey ? `${parentKey}.${humanizeKey(key)}` : humanizeKey(key)
 
-    return (
-      <ul className="mt-2 space-y-2 pl-4 text-sm text-muted-foreground">
-        {value.map((item, index) => (
-          <li key={`${String(index)}-${depth}`} className="list-disc marker:text-foreground/60">
-            {typeof item === "object" && item !== null ? (
-              <div className="space-y-2">{renderObjectEntries(item as Record<string, unknown>, depth + 1)}</div>
-            ) : (
-              <span>{formatPrimitive(item)}</span>
-            )}
-          </li>
-        ))}
-      </ul>
-    )
+    if (Array.isArray(value)) {
+      if (value.length === 0) {
+        rows.push({ key: label, value: "No entries" })
+        continue
+      }
+
+      value.forEach((item, index) => {
+        if (typeof item === "object" && item !== null) {
+          flattenEntries(item as Record<string, unknown>, `${label}[${index}]`, rows)
+        } else {
+          rows.push({ key: `${label}[${index}]`, value: normalizeValue(item) })
+        }
+      })
+      continue
+    }
+
+    if (typeof value === "object" && value !== null) {
+      flattenEntries(value as Record<string, unknown>, label, rows)
+      continue
+    }
+
+    const isDateLike = key.toLowerCase().includes("date")
+    rows.push({
+      key: label,
+      value: isDateLike ? formatDateValue(value as string) : normalizeValue(value),
+    })
   }
 
-  if (typeof value === "object" && value !== null) {
-    return <div className="space-y-2">{renderObjectEntries(value as Record<string, unknown>, depth)}</div>
-  }
-
-  return <span className="text-sm text-foreground">{formatPrimitive(value)}</span>
-}
-
-function renderObjectEntries(object: Record<string, unknown>, depth = 0): ReactNode {
-  const entries = Object.entries(object)
-  if (entries.length === 0) return <span className="text-sm text-muted-foreground">No data</span>
-
-  return entries.map(([key, value]) => {
-    const isNestedObject = typeof value === "object" && value !== null && !Array.isArray(value)
-    const isDateLike = typeof value === "string" && key.toLowerCase().includes("date")
-
-    return (
-      <div
-        key={key}
-        className={depth === 0 ? "rounded-md border border-border bg-muted/20 p-3" : "rounded-md border border-border/80 bg-background p-2"}
-      >
-        <p className="font-mono text-[10px] tracking-[0.12em] text-muted-foreground uppercase">
-          {humanizeKey(key)}
-        </p>
-        <div className="mt-2">
-          {isNestedObject ? (
-            <div className="pl-2">{renderObjectEntries(value as Record<string, unknown>, depth + 1)}</div>
-          ) : isDateLike ? (
-            <span className="text-sm text-foreground">{formatDateValue(value as string)}</span>
-          ) : (
-            renderValue(value, depth + 1)
-          )}
-        </div>
-      </div>
-    )
-  })
+  return rows
 }
 
 export function WhoisDetails({ result }: WhoisDetailsProps) {
+  const rows = flattenEntries(result)
+
   return (
     <section className="border border-border bg-card p-5">
       <p className="font-mono text-[11px] tracking-[0.16em] text-muted-foreground uppercase">
@@ -110,8 +89,22 @@ export function WhoisDetails({ result }: WhoisDetailsProps) {
         {result.ldhName ?? result.handle ?? "Domain record"}
       </h2>
 
-      <div className="mt-6 space-y-3">
-        {renderObjectEntries(result)}
+      <div className="mt-6 min-w-0 overflow-hidden">
+        <dl className="space-y-2">
+          {rows.map((row) => (
+            <div
+              key={row.key}
+              className="grid gap-2 border-b border-border pb-2 last:border-b-0 sm:grid-cols-[minmax(180px,220px)_minmax(0,1fr)]"
+            >
+              <dt className="font-mono text-[10px] tracking-[0.12em] text-muted-foreground uppercase break-words">
+                {row.key}
+              </dt>
+              <dd className="min-w-0 max-w-full overflow-x-auto rounded-md border border-border/80 bg-muted/10 px-2 py-1.5 text-sm text-foreground whitespace-pre-wrap">
+                <span className="block min-w-[240px] break-all">{row.value}</span>
+              </dd>
+            </div>
+          ))}
+        </dl>
       </div>
     </section>
   )
