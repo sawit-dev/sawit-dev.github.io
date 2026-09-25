@@ -19,7 +19,7 @@ export function getSystemTheme(): Exclude<Theme, "system"> {
 
 export function useThemePreference(
   defaultTheme: Theme = "system",
-  storageKey = "sawit-dev-theme",
+  storageKey = "sawit-dev-theme"
 ) {
   const [theme, setThemeState] = React.useState<Theme>(defaultTheme)
 
