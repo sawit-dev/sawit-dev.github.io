@@ -47,6 +47,10 @@ export function useThemePreference(
   }, [storageKey])
 
   React.useEffect(() => {
+    if (!isHydrated) {
+      return
+    }
+
     const root = window.document.documentElement
 
     const applyTheme = () => {
@@ -63,7 +67,7 @@ export function useThemePreference(
     const mediaQuery = window.matchMedia("(prefers-color-scheme: dark)")
     mediaQuery.addEventListener("change", applyTheme)
     return () => mediaQuery.removeEventListener("change", applyTheme)
-  }, [theme])
+  }, [isHydrated, theme])
 
   const setTheme = (nextTheme: Theme) => {
     window.localStorage.setItem(storageKey, nextTheme)
