@@ -1,16 +1,26 @@
-import { Button } from "@workspace/ui/components/button"
+import type { MetaFunction } from "react-router"
+import { HomeContactCta } from "../components/home/contact-cta"
+import { FeaturedProjects } from "../components/home/featured-projects"
+import { HomeHero } from "../components/home/hero"
+import { HomeOverview } from "../components/home/overview"
+import { TechnologyStack } from "../components/home/technology-stack"
+
+export const meta: MetaFunction = () => [
+  { title: "Sawit Dev | Useful software, thoughtfully made" },
+  {
+    name: "description",
+    content: "The public home for Sawit Dev projects and experiments.",
+  },
+]
 
 export default function Home() {
   return (
-    <div className="flex min-h-svh p-6">
-      <div className="flex max-w-md min-w-0 flex-col gap-4 text-sm leading-loose">
-        <div>
-          <h1 className="font-medium">Project ready!</h1>
-          <p>You may now add components and start building.</p>
-          <p>We&apos;ve already added the button component for you.</p>
-          <Button className="mt-2">Button</Button>
-        </div>
-      </div>
-    </div>
+    <>
+      <HomeHero />
+      <HomeOverview />
+      <FeaturedProjects />
+      <TechnologyStack />
+      <HomeContactCta />
+    </>
   )
 }

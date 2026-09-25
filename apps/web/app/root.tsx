@@ -8,6 +8,7 @@ import {
 } from "react-router"
 
 import type { Route } from "./+types/root"
+import { SiteShell } from "./components/layout/site-shell"
 import "@workspace/ui/globals.css"
 
 export function Layout({ children }: { children: React.ReactNode }) {
@@ -19,8 +20,8 @@ export function Layout({ children }: { children: React.ReactNode }) {
         <Meta />
         <Links />
       </head>
-      <body>
-        {children}
+      <body className="font-sans antialiased">
+        <SiteShell>{children}</SiteShell>
         <ScrollRestoration />
         <Scripts />
       </body>

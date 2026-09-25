@@ -47,6 +47,9 @@ importers:
       react-router:
         specifier: 7.15.1
         version: 7.15.1(react-dom@19.2.6(react@19.2.6))(react@19.2.6)
+      simple-icons:
+        specifier: ^16.32.0
+        version: 16.32.0
     devDependencies:
       '@react-router/dev':
         specifier: 7.15.1
@@ -3338,6 +3341,10 @@ packages:
   signal-exit@4.1.0:
     resolution: {integrity: sha512-bzyZ1e88w9O1iNJbKnOlvYTrWPDl46O1bG0D3XInv+9tkPrxrN8jUUTiFlDkkmKWgn1M6CfIA13SuGqOa9Korw==}
     engines: {node: '>=14'}
+
+  simple-icons@16.32.0:
+    resolution: {integrity: sha512-BwqATHxAulx7X6kNdTkecy7PBjLkgtAHcgrwYLd9iA+cD2At9DzhJwdwaSELk2+aZe01IfiM/Wxtyp68Dvup2A==}
+    engines: {node: '>=0.12.18'}
 
   sisteransi@1.0.5:
     resolution: {integrity: sha512-bLGGlR1QxBcynn2d5YmDX4MGjlZvy2MRBDRNHLJ8VI6l6+9FUiyTFNJ0IveOSP0bcXgVDPRcfGqA0pjaqUpfVg==}
@@ -6757,6 +6764,8 @@ snapshots:
   signal-exit@3.0.7: {}
 
   signal-exit@4.1.0: {}
+
+  simple-icons@16.32.0: {}
 
   sisteransi@1.0.5: {}
 
