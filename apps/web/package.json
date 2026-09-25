@@ -5,7 +5,7 @@
   "private": true,
   "scripts": {
     "dev": "react-router dev",
-    "build": "react-router build",
+    "build": "react-router build && cp build/client/__spa-fallback.html build/client/404.html",
     "start": "react-router-serve ./build/server/index.js",
     "format": "prettier --write \"**/*.{ts,tsx}\"",
     "typecheck": "react-router typegen && tsc"
