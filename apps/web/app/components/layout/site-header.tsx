@@ -2,6 +2,7 @@ import { Menu, X } from "lucide-react"
 import { Button } from "@workspace/ui/components/button"
 import { useState } from "react"
 import { NavLink } from "react-router"
+import { ThemeToggle } from "../theme/theme-toggle"
 
 const navigation = [
   { label: "Home", to: "/" },
@@ -40,21 +41,24 @@ export function SiteHeader() {
             </NavLink>
           ))}
         </nav>
-        <Button
-          type="button"
-          variant="outline"
-          size="icon"
-          className="md:hidden"
-          aria-label={isOpen ? "Close navigation" : "Open navigation"}
-          aria-expanded={isOpen}
-          onClick={() => setIsOpen((open) => !open)}
-        >
-          {isOpen ? (
-            <X aria-hidden="true" size={18} />
-          ) : (
-            <Menu aria-hidden="true" size={18} />
-          )}
-        </Button>
+        <div className="flex items-center gap-2">
+          <ThemeToggle />
+          <Button
+            type="button"
+            variant="outline"
+            size="icon"
+            className="md:hidden"
+            aria-label={isOpen ? "Close navigation" : "Open navigation"}
+            aria-expanded={isOpen}
+            onClick={() => setIsOpen((open) => !open)}
+          >
+            {isOpen ? (
+              <X aria-hidden="true" size={18} />
+            ) : (
+              <Menu aria-hidden="true" size={18} />
+            )}
+          </Button>
+        </div>
       </div>
       {isOpen && (
         <nav

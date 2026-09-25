@@ -9,6 +9,7 @@ import {
 
 import type { Route } from "./+types/root"
 import { SiteShell } from "./components/layout/site-shell"
+import { ThemeProvider } from "./components/theme/theme-provider"
 import "@workspace/ui/globals.css"
 
 export function Layout({ children }: { children: React.ReactNode }) {
@@ -21,7 +22,9 @@ export function Layout({ children }: { children: React.ReactNode }) {
         <Links />
       </head>
       <body className="font-sans antialiased">
-        <SiteShell>{children}</SiteShell>
+        <ThemeProvider>
+          <SiteShell>{children}</SiteShell>
+        </ThemeProvider>
         <ScrollRestoration />
         <Scripts />
       </body>
