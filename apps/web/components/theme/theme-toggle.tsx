@@ -1,8 +1,6 @@
 import { Monitor, Moon, Sun } from "lucide-react"
-import {
-  ToggleGroup,
-  ToggleGroupItem,
-} from "@workspace/ui/components/toggle-group"
+import { toggleVariants } from "@workspace/ui/components/toggle"
+import { cn } from "@workspace/ui/lib/utils"
 import { useTheme, type Theme } from "../../hooks/use-theme"
 
 const themes: { value: Theme; label: string; icon: typeof Monitor }[] = [
@@ -15,26 +13,30 @@ export function ThemeToggle() {
   const { theme, setTheme } = useTheme()
 
   return (
-    <ToggleGroup
-      value={[theme]}
-      variant="outline"
-      size="sm"
-      spacing={0}
+    <div
+      role="group"
+      data-size="sm"
+      data-spacing="0"
+      data-variant="outline"
+      className="flex w-fit flex-row items-center rounded-lg"
       aria-label="Choose color theme"
     >
       {themes.map(({ value, label, icon: Icon }) => (
-        <ToggleGroupItem
+        <button
           key={value}
-          value={value}
+          type="button"
           onClick={() => setTheme(value)}
           aria-pressed={theme === value}
           aria-label={label}
           title={label}
-          className="size-7"
+          className={cn(
+            "size-7 shrink-0 rounded-none border-l-0 px-2 first:rounded-l-lg first:border-l last:rounded-r-lg",
+            toggleVariants({ variant: "outline", size: "sm" })
+          )}
         >
           <Icon aria-hidden="true" size={14} />
-        </ToggleGroupItem>
+        </button>
       ))}
-    </ToggleGroup>
+    </div>
   )
 }
