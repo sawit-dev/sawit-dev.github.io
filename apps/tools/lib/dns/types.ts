@@ -1,4 +1,4 @@
-import type { DnsRecordType } from "@sawit/networking"
+import type { DnsRecordType } from "@sawit/networking/dns"
 
 export type DnsAnswer = {
   name: string

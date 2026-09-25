@@ -1,6 +1,6 @@
 import { Button } from "@sawit/ui/components/button"
 import { Input } from "@sawit/ui/components/input"
-import type { DnsRecordType } from "@sawit/networking"
+import type { DnsRecordType } from "@sawit/networking/dns"
 
 type DnsCheckerFormProps = {
   value: string

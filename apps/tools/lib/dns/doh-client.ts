@@ -1,4 +1,4 @@
-import { dnsProviders, type DnsRecordType } from "@sawit/networking"
+import { dnsProviders, type DnsRecordType } from "@sawit/networking/dns"
 
 import type { DnsLookupResult } from "./types"
 

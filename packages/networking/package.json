@@ -4,6 +4,8 @@
   "type": "module",
   "private": true,
   "exports": {
-    ".": "./src/index.ts"
+    ".": "./src/index.ts",
+    "./dns": "./src/dns/index.ts",
+    "./rdap": "./src/rdap/index.ts"
   }
 }

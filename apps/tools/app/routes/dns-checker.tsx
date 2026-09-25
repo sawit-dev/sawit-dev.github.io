@@ -1,6 +1,6 @@
 import { useState } from "react"
 import type { MetaFunction } from "react-router"
-import type { DnsRecordType } from "@sawit/networking"
+import type { DnsRecordType } from "@sawit/networking/dns"
 
 import { DnsCheckerForm } from "../../components/dns-checker/form"
 import { DnsCheckerHero } from "../../components/dns-checker/hero"

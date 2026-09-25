@@ -16,7 +16,9 @@
     "paths": {
       "@/*": ["./app/*"],
       "@sawit/ui/*": ["../../packages/ui/src/*"],
-      "@sawit/networking": ["../../packages/networking/src/index.ts"]
+      "@sawit/networking": ["../../packages/networking/src/index.ts"],
+      "@sawit/networking/dns": ["../../packages/networking/src/dns/index.ts"],
+      "@sawit/networking/rdap": ["../../packages/networking/src/rdap/index.ts"]
     },
     "esModuleInterop": true,
     "verbatimModuleSyntax": true,

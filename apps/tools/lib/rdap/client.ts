@@ -1,4 +1,4 @@
-import { getBootstrapEndpoint } from "@sawit/networking"
+import { getBootstrapEndpoint } from "@sawit/networking/rdap"
 
 import type { RdapRecord } from "./types"
 

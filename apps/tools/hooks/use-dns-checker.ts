@@ -1,5 +1,5 @@
 import { useState } from "react"
-import type { DnsRecordType } from "@sawit/networking"
+import type { DnsRecordType } from "@sawit/networking/dns"
 
 import { queryDns } from "../lib/dns/doh-client"
 import type { DnsLookupResult } from "../lib/dns/types"
