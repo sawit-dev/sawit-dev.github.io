@@ -17,7 +17,11 @@ type NavigationGroup = {
 }
 
 const navigation: Array<NavigationLink | NavigationGroup> = [
-  { label: "Home", to: "/" },
+  {
+    label: "Home",
+    to: "/",
+    description: "See all available network tools in one place.",
+  },
   {
     label: "Networking",
     description:
@@ -38,7 +42,7 @@ const navigation: Array<NavigationLink | NavigationGroup> = [
 ]
 
 function linkClass({ isActive }: { isActive: boolean }) {
-  return `text-sm transition-colors ${isActive ? "text-foreground" : "text-muted-foreground hover:text-foreground"}`
+  return `inline-flex h-7 items-center rounded-lg px-1 text-sm transition-colors ${isActive ? "text-foreground" : "text-muted-foreground hover:text-foreground"}`
 }
 
 function isGroupActive(items: { to: string }[], pathname: string) {
@@ -337,23 +341,31 @@ export function SiteHeader() {
               }
 
               return (
-                <NavLink
-                  key={item.to}
-                  to={item.to}
-                  role="menuitem"
-                  className={({ isActive }) =>
-                    `flex items-center justify-between py-3 text-[clamp(2rem,7vw,3.5rem)] leading-none transition-colors ${isActive ? "text-foreground" : "text-foreground/90"}`
-                  }
-                  onClick={() => {
-                    setIsOpen(false)
-                    setOpenGroup(null)
-                  }}
-                >
-                  <span>{item.label}</span>
-                  <span className="text-2xl leading-none text-foreground/70">
-                    ›
-                  </span>
-                </NavLink>
+                <div className="py-5" key={item.to}>
+                  <NavLink
+                    to={item.to}
+                    role="menuitem"
+                    className={({ isActive }) =>
+                      `group flex items-start justify-between gap-4 text-left ${isActive ? "text-foreground" : "text-foreground/90"}`
+                    }
+                    onClick={() => {
+                      setIsOpen(false)
+                      setOpenGroup(null)
+                    }}
+                  >
+                    <span>
+                      <span className="block text-xl font-medium">
+                        {item.label}
+                      </span>
+                      <span className="mt-1 block max-w-xs text-sm leading-5 text-muted-foreground">
+                        {item.description}
+                      </span>
+                    </span>
+                    <span className="mt-1 flex size-8 shrink-0 items-center justify-center rounded-full border border-border text-muted-foreground transition-colors group-hover:bg-muted">
+                      <ArrowUpRight aria-hidden="true" size={17} />
+                    </span>
+                  </NavLink>
+                </div>
               )
             })}
           </div>
