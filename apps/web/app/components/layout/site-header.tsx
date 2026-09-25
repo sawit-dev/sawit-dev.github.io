@@ -26,9 +26,7 @@ export function SiteHeader() {
           className="flex items-center gap-3 text-sm font-semibold tracking-tight"
           onClick={() => setIsOpen(false)}
         >
-          <span className="flex size-8 items-center justify-center bg-primary font-mono text-xs text-primary-foreground">
-            SD
-          </span>
+          <img src="/logo.svg" alt="Sawit Dev" className="size-8" />
           <span>Sawit Dev</span>
         </NavLink>
         <nav
