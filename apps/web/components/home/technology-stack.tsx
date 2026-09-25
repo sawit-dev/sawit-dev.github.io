@@ -1,5 +1,5 @@
 import { Braces, Layers3, Terminal } from "lucide-react"
-import { Card, CardContent } from "@workspace/ui/components/card"
+import { Card, CardContent } from "@sawit/ui/components/card"
 
 const tools = [
   { icon: Braces, label: "TypeScript" },

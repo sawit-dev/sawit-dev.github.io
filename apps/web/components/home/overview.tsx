@@ -1,5 +1,5 @@
 import { Blocks, Compass, Workflow } from "lucide-react"
-import { Card, CardContent } from "@workspace/ui/components/card"
+import { Card, CardContent } from "@sawit/ui/components/card"
 
 const principles = [
   {

@@ -11,8 +11,8 @@ import { ArrowLeft, Home } from "lucide-react"
 import type { Route } from "./+types/root"
 import { SiteShell } from "../components/layout/site-shell"
 import { ThemeProvider } from "../components/theme/theme-provider"
-import { Button } from "@workspace/ui/components/button"
-import "@workspace/ui/globals.css"
+import { Button } from "@sawit/ui/components/button"
+import "@sawit/ui/globals.css"
 
 const themeBootstrapScript = `
   (() => {

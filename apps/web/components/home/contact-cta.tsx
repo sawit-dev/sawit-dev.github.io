@@ -1,5 +1,5 @@
 import { ArrowRight } from "lucide-react"
-import { Button } from "@workspace/ui/components/button"
+import { Button } from "@sawit/ui/components/button"
 import { Link } from "react-router"
 
 export function HomeContactCta() {

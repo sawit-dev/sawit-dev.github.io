@@ -1,5 +1,5 @@
 import { Menu, X } from "lucide-react"
-import { Button } from "@workspace/ui/components/button"
+import { Button } from "@sawit/ui/components/button"
 import { useEffect, useRef, useState } from "react"
 import { NavLink } from "react-router"
 import { ThemeToggle } from "../theme/theme-toggle"

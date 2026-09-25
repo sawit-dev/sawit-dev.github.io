@@ -1,7 +1,7 @@
 import type { ReactNode } from "react"
 import { ArrowUpRight, MessageCircle } from "lucide-react"
 import { siGithub } from "simple-icons"
-import { Separator } from "@workspace/ui/components/separator"
+import { Separator } from "@sawit/ui/components/separator"
 import { BrandIcon } from "../brand-icon"
 
 type ChannelIcon = (props: { size: number }) => ReactNode

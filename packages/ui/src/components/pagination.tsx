@@ -1,7 +1,7 @@
 import * as React from "react"
 import { cn } from "cn"
 
-import { Button } from "@workspace/ui/components/button"
+import { Button } from "@sawit/ui/components/button"
 import {
   ChevronLeftIcon,
   ChevronRightIcon,

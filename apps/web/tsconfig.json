@@ -15,7 +15,7 @@
     "rootDirs": [".", "./.react-router/types"],
     "paths": {
       "@/*": ["./app/*"],
-      "@workspace/ui/*": ["../../packages/ui/src/*"]
+      "@sawit/ui/*": ["../../packages/ui/src/*"]
     },
     "esModuleInterop": true,
     "verbatimModuleSyntax": true,

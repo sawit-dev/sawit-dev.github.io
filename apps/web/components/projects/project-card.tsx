@@ -5,8 +5,8 @@ import {
   CardFooter,
   CardHeader,
   CardTitle,
-} from "@workspace/ui/components/card"
-import { Badge } from "@workspace/ui/components/badge"
+} from "@sawit/ui/components/card"
+import { Badge } from "@sawit/ui/components/badge"
 import type { Project } from "../../lib/projects"
 
 export function ProjectCard({

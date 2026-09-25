@@ -9,7 +9,7 @@ import {
   type Locale,
 } from "react-day-picker"
 
-import { Button, buttonVariants } from "@workspace/ui/components/button"
+import { Button, buttonVariants } from "@sawit/ui/components/button"
 import {
   ChevronLeftIcon,
   ChevronRightIcon,

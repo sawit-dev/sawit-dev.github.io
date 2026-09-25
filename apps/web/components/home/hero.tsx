@@ -1,5 +1,5 @@
 import { ArrowDown, ArrowUpRight, Code2 } from "lucide-react"
-import { Button } from "@workspace/ui/components/button"
+import { Button } from "@sawit/ui/components/button"
 import { Link } from "react-router"
 
 export function HomeHero() {
