@@ -22,14 +22,22 @@ export function DnsCheckerResults({ results }: { results: DnsLookupResult[] }) {
   const successfulResolvers = results.filter((result) => result.status === "success").length
   const rawText = results
     .map((result) => {
+      const lines: string[] = []
+
+      lines.push(`provider=${result.providerName}`)
       if (result.status !== "success" || result.answers.length === 0) {
-        return `${result.providerName}: ${result.error ?? "No matching records were returned."}`
+        lines.push(`status=${result.status}`)
+        lines.push(`value=${result.error ?? "No matching records were returned."}`)
+        return lines.join("\n")
       }
 
-      const lines = result.answers.map(
-        (answer) =>
-          `${result.providerName} | ${recordTypeLabels[answer.type] ?? "DNS"} | ${answer.data} | TTL ${formatTtl(answer.ttl)}`
-      )
+      lines.push("status=success")
+      result.answers.forEach((answer) => {
+        const type = recordTypeLabels[answer.type] ?? "DNS"
+        lines.push(`  record=${type}`)
+        lines.push(`  value=${answer.data}`)
+        lines.push(`  ttl=${formatTtl(answer.ttl)}`)
+      })
 
       return lines.join("\n")
     })

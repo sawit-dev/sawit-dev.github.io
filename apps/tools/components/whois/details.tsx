@@ -41,6 +41,7 @@ function normalizeValue(value: unknown): string {
 function flattenEntries(
   object: Record<string, unknown>,
   parentKey = "",
+  depth = 0,
   rows: FlattenedRow[] = []
 ): FlattenedRow[] {
   for (const [key, value] of Object.entries(object)) {
@@ -48,28 +49,28 @@ function flattenEntries(
 
     if (Array.isArray(value)) {
       if (value.length === 0) {
-        rows.push({ key: label, value: "No entries" })
+        rows.push({ key: `${"  ".repeat(depth)}${label}`, value: "No entries" })
         continue
       }
 
       value.forEach((item, index) => {
         if (typeof item === "object" && item !== null) {
-          flattenEntries(item as Record<string, unknown>, `${label}[${index}]`, rows)
+          flattenEntries(item as Record<string, unknown>, `${label}[${index}]`, depth + 1, rows)
         } else {
-          rows.push({ key: `${label}[${index}]`, value: normalizeValue(item) })
+          rows.push({ key: `${"  ".repeat(depth)}${label}[${index}]`, value: normalizeValue(item) })
         }
       })
       continue
     }
 
     if (typeof value === "object" && value !== null) {
-      flattenEntries(value as Record<string, unknown>, label, rows)
+      flattenEntries(value as Record<string, unknown>, label, depth + 1, rows)
       continue
     }
 
     const isDateLike = key.toLowerCase().includes("date")
     rows.push({
-      key: label,
+      key: `${"  ".repeat(depth)}${label}`,
       value: isDateLike ? formatDateValue(value as string) : normalizeValue(value),
     })
   }
@@ -79,7 +80,7 @@ function flattenEntries(
 
 export function WhoisDetails({ result }: WhoisDetailsProps) {
   const rows = flattenEntries(result)
-  const rawText = rows.map((row) => `${row.key}: ${row.value}`).join("\n")
+  const rawText = rows.map((row) => `${row.key}=${row.value}`).join("\n")
 
   return (
     <section className="border border-border bg-card p-5">
