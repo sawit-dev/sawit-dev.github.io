@@ -3,8 +3,7 @@ import {
   ToggleGroup,
   ToggleGroupItem,
 } from "@workspace/ui/components/toggle-group"
-import type { Theme } from "./theme-provider"
-import { useTheme } from "./theme-provider"
+import { useTheme, type Theme } from "../../hooks/use-theme"
 
 const themes: { value: Theme; label: string; icon: typeof Monitor }[] = [
   { value: "system", label: "Use system theme", icon: Monitor },

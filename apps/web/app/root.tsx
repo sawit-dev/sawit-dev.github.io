@@ -8,8 +8,8 @@ import {
 } from "react-router"
 
 import type { Route } from "./+types/root"
-import { SiteShell } from "./components/layout/site-shell"
-import { ThemeProvider } from "./components/theme/theme-provider"
+import { SiteShell } from "../components/layout/site-shell"
+import { ThemeProvider } from "../components/theme/theme-provider"
 import "@workspace/ui/globals.css"
 
 const themeBootstrapScript = `

@@ -39,8 +39,14 @@ This repository contains a monorepo-based frontend setup with:
 ├── apps/
 │   └── web/
 │       ├── app/
+│       │   ├── root.tsx
+│       │   └── routes/
+│       ├── components/
+│       ├── hooks/
+│       ├── lib/
 │       ├── public/
-│       └── package.json
+│       ├── package.json
+│       └── vite.config.ts
 ├── packages/
 │   └── ui/
 ├── package.json

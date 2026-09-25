@@ -2,32 +2,25 @@ import * as React from "react"
 
 export type Theme = "dark" | "light" | "system"
 
-type ThemeProviderProps = {
-  children: React.ReactNode
-  defaultTheme?: Theme
-  storageKey?: string
-}
-
-type ThemeProviderState = {
+export type ThemeProviderState = {
   theme: Theme
   setTheme: (theme: Theme) => void
 }
 
-const ThemeProviderContext = React.createContext<
+export const ThemeProviderContext = React.createContext<
   ThemeProviderState | undefined
 >(undefined)
 
-function getSystemTheme(): Exclude<Theme, "system"> {
+export function getSystemTheme(): Exclude<Theme, "system"> {
   return window.matchMedia("(prefers-color-scheme: dark)").matches
     ? "dark"
     : "light"
 }
 
-export function ThemeProvider({
-  children,
-  defaultTheme = "system",
+export function useThemePreference(
+  defaultTheme: Theme = "system",
   storageKey = "sawit-dev-theme",
-}: ThemeProviderProps) {
+) {
   const [theme, setThemeState] = React.useState<Theme>(defaultTheme)
 
   React.useEffect(() => {
@@ -65,11 +58,7 @@ export function ThemeProvider({
     setThemeState(nextTheme)
   }
 
-  return (
-    <ThemeProviderContext.Provider value={{ theme, setTheme }}>
-      {children}
-    </ThemeProviderContext.Provider>
-  )
+  return { theme, setTheme }
 }
 
 export function useTheme() {

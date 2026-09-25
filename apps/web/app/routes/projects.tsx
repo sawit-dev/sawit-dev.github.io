@@ -1,6 +1,6 @@
 import type { MetaFunction } from "react-router"
-import { ProjectsHeader } from "../components/projects/header"
-import { ProjectGrid } from "../components/projects/project-grid"
+import { ProjectsHeader } from "../../components/projects/header"
+import { ProjectGrid } from "../../components/projects/project-grid"
 
 export const meta: MetaFunction = () => [
   { title: "Projects | Sawit Dev" },
