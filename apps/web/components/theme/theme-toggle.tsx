@@ -32,6 +32,7 @@ export function ThemeToggle() {
         <ToggleGroupItem
           key={value}
           value={value}
+          aria-pressed={theme === value}
           aria-label={label}
           title={label}
           className="size-7"
