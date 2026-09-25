@@ -32,11 +32,10 @@ export function DnsCheckerResults({ results }: { results: DnsLookupResult[] }) {
       }
 
       lines.push("status=success")
+      lines.push("records:")
       result.answers.forEach((answer) => {
         const type = recordTypeLabels[answer.type] ?? "DNS"
-        lines.push(`  record=${type}`)
-        lines.push(`  value=${answer.data}`)
-        lines.push(`  ttl=${formatTtl(answer.ttl)}`)
+        lines.push(`  - ${type} ${answer.data} ttl=${formatTtl(answer.ttl)}`)
       })
 
       return lines.join("\n")

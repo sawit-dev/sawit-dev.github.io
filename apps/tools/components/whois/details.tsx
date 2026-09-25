@@ -4,11 +4,6 @@ type WhoisDetailsProps = {
   result: RdapRecord
 }
 
-type FlattenedRow = {
-  key: string
-  value: string
-}
-
 function humanizeKey(key: string) {
   return key
     .replace(/([a-z0-9])([A-Z])/g, "$1 $2")
@@ -38,49 +33,61 @@ function normalizeValue(value: unknown): string {
   return JSON.stringify(value)
 }
 
-function flattenEntries(
+function renderEnvLikeBlock(
   object: Record<string, unknown>,
-  parentKey = "",
   depth = 0,
-  rows: FlattenedRow[] = []
-): FlattenedRow[] {
+  parentLabel = ""
+): string[] {
+  const indent = "  ".repeat(depth)
+  const lines: string[] = []
+
   for (const [key, value] of Object.entries(object)) {
-    const label = parentKey ? `${parentKey}.${humanizeKey(key)}` : humanizeKey(key)
+    const label = humanizeKey(key)
 
     if (Array.isArray(value)) {
       if (value.length === 0) {
-        rows.push({ key: `${"  ".repeat(depth)}${label}`, value: "No entries" })
+        lines.push(`${indent}${parentLabel ? `${parentLabel}.${label}` : label}=[]`)
         continue
       }
 
-      value.forEach((item, index) => {
-        if (typeof item === "object" && item !== null) {
-          flattenEntries(item as Record<string, unknown>, `${label}[${index}]`, depth + 1, rows)
+      const primitiveValues = value.filter((item) => item === null || typeof item !== "object")
+      if (primitiveValues.length === value.length) {
+        lines.push(
+          `${indent}${parentLabel ? `${parentLabel}.${label}` : label}=${value.map((item) => normalizeValue(item)).join(", ")}`
+        )
+        continue
+      }
+
+      lines.push(`${indent}${parentLabel ? `${parentLabel}.${label}` : label}:`)
+      value.forEach((item) => {
+        if (item && typeof item === "object") {
+          lines.push(...renderEnvLikeBlock(item as Record<string, unknown>, depth + 1))
         } else {
-          rows.push({ key: `${"  ".repeat(depth)}${label}[${index}]`, value: normalizeValue(item) })
+          lines.push(`${"  ".repeat(depth + 1)}- ${normalizeValue(item)}`)
         }
       })
       continue
     }
 
-    if (typeof value === "object" && value !== null) {
-      flattenEntries(value as Record<string, unknown>, label, depth + 1, rows)
+    if (value && typeof value === "object") {
+      const nextLabel = parentLabel ? `${parentLabel}.${label}` : label
+      lines.push(`${indent}${nextLabel}:`)
+      lines.push(...renderEnvLikeBlock(value as Record<string, unknown>, depth + 1, nextLabel))
       continue
     }
 
-    const isDateLike = key.toLowerCase().includes("date")
-    rows.push({
-      key: `${"  ".repeat(depth)}${label}`,
-      value: isDateLike ? formatDateValue(value as string) : normalizeValue(value),
-    })
+    const finalKey = parentLabel ? `${parentLabel}.${label}` : label
+    const normalizedValue = key.toLowerCase().includes("date")
+      ? formatDateValue(value as string)
+      : normalizeValue(value)
+    lines.push(`${indent}${finalKey}=${normalizedValue}`)
   }
 
-  return rows
+  return lines
 }
 
 export function WhoisDetails({ result }: WhoisDetailsProps) {
-  const rows = flattenEntries(result)
-  const rawText = rows.map((row) => `${row.key}=${row.value}`).join("\n")
+  const rawText = renderEnvLikeBlock(result).join("\n")
 
   return (
     <section className="border border-border bg-card p-5">
