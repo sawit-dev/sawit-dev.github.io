@@ -38,6 +38,9 @@ jobs:
       - name: Build static site
         run: pnpm --filter web build
 
+      - name: Prepare custom 404 page
+        run: cp apps/web/build/client/__spa-fallback.html apps/web/build/client/404.html
+
       - name: Configure Pages
         uses: actions/configure-pages@v5
 

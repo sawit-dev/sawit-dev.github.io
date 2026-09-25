@@ -6,10 +6,12 @@ import {
   ScrollRestoration,
   isRouteErrorResponse,
 } from "react-router"
+import { ArrowLeft, Home } from "lucide-react"
 
 import type { Route } from "./+types/root"
 import { SiteShell } from "../components/layout/site-shell"
 import { ThemeProvider } from "../components/theme/theme-provider"
+import { Button } from "@workspace/ui/components/button"
 import "@workspace/ui/globals.css"
 
 const themeBootstrapScript = `
@@ -81,14 +83,33 @@ export function ErrorBoundary({ error }: Route.ErrorBoundaryProps) {
   }
 
   return (
-    <main className="container mx-auto p-4 pt-16">
-      <h1>{message}</h1>
-      <p>{details}</p>
-      {stack && (
-        <pre className="w-full overflow-x-auto p-4">
-          <code>{stack}</code>
-        </pre>
-      )}
+    <main className="mx-auto flex min-h-[60svh] w-full max-w-6xl items-center px-5 py-16 lg:px-8">
+      <div className="max-w-xl">
+        <p className="font-mono text-xs tracking-[0.16em] text-muted-foreground uppercase">
+          {message === "404" ? "Page not found" : "Something went wrong"}
+        </p>
+        <h1 className="mt-4 font-heading text-5xl font-semibold tracking-tight sm:text-6xl">
+          {message}
+        </h1>
+        <p className="mt-5 max-w-md text-lg leading-8 text-muted-foreground">
+          {details}
+        </p>
+        <div className="mt-8 flex flex-wrap gap-3">
+          <Button render={<a href="/" />}>
+            <Home aria-hidden="true" size={16} />
+            Back home
+          </Button>
+          <Button variant="outline" onClick={() => window.history.back()}>
+            <ArrowLeft aria-hidden="true" size={16} />
+            Go back
+          </Button>
+        </div>
+        {stack && (
+          <pre className="mt-10 w-full overflow-x-auto border border-border p-4 text-sm">
+            <code>{stack}</code>
+          </pre>
+        )}
+      </div>
     </main>
   )
 }
