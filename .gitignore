@@ -2,6 +2,10 @@
 .env*
 node_modules
 
+# playwright
+playwright-report/
+test-results/
+
 # turbo
 .turbo
 
