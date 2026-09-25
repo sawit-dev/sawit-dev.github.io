@@ -1,4 +1,4 @@
-import { Menu, X } from "lucide-react"
+import { ChevronDown, Menu, X } from "lucide-react"
 import { Button } from "@sawit/ui/components/button"
 import { useEffect, useRef, useState } from "react"
 import { NavLink, useLocation } from "react-router"
@@ -25,6 +25,10 @@ const navigation: Array<NavigationLink | NavigationGroup> = [
   },
 ]
 
+const networkingNavigation = navigation.find(
+  (item): item is NavigationGroup => "items" in item
+)
+
 function linkClass({ isActive }: { isActive: boolean }) {
   return `text-sm transition-colors ${isActive ? "text-foreground" : "text-muted-foreground hover:text-foreground"}`
 }
@@ -36,19 +40,41 @@ function isGroupActive(items: { to: string }[], pathname: string) {
 export function SiteHeader() {
   const [isOpen, setIsOpen] = useState(false)
   const { pathname } = useLocation()
+  const [isNetworkingOpen, setIsNetworkingOpen] = useState(() =>
+    networkingNavigation ? isGroupActive(networkingNavigation.items, pathname) : false
+  )
   const menuButtonRef = useRef<HTMLButtonElement>(null)
+  const desktopGroupRef = useRef<HTMLDivElement>(null)
   const mobileNavRef = useRef<HTMLElement>(null)
   const wasOpenRef = useRef(false)
   const mobileMenuId = "mobile-navigation"
 
   useEffect(() => {
     function handleEscape(event: KeyboardEvent) {
-      if (event.key === "Escape") setIsOpen(false)
+      if (event.key === "Escape") {
+        setIsOpen(false)
+        setIsNetworkingOpen(false)
+      }
     }
 
     document.addEventListener("keydown", handleEscape)
     return () => document.removeEventListener("keydown", handleEscape)
   }, [])
+
+  useEffect(() => {
+    function handlePointerDown(event: PointerEvent) {
+      if (
+        isNetworkingOpen &&
+        desktopGroupRef.current &&
+        !desktopGroupRef.current.contains(event.target as Node)
+      ) {
+        setIsNetworkingOpen(false)
+      }
+    }
+
+    document.addEventListener("pointerdown", handlePointerDown)
+    return () => document.removeEventListener("pointerdown", handlePointerDown)
+  }, [isNetworkingOpen])
 
   useEffect(() => {
     const mediaQuery = window.matchMedia("(min-width: 768px)")
@@ -94,12 +120,39 @@ export function SiteHeader() {
         <nav className="hidden items-center gap-7 md:flex" aria-label="Main navigation">
           {navigation.map((item) => {
             if ("items" in item) {
+              const isActive = isGroupActive(item.items, pathname)
+
               return (
-                <div className="flex items-center gap-4" key={item.label}>
-                  <span className="text-sm text-muted-foreground">{item.label}</span>
-                  <div className="flex items-center gap-4 border-l border-border pl-4">
+                <div className="relative" key={item.label} ref={desktopGroupRef}>
+                  <Button
+                    type="button"
+                    variant="ghost"
+                    size="sm"
+                    aria-expanded={isNetworkingOpen}
+                    aria-haspopup="menu"
+                    className={`gap-1 px-1 text-sm font-normal ${isActive ? "text-foreground" : "text-muted-foreground"}`}
+                    onClick={() => setIsNetworkingOpen((open) => !open)}
+                  >
+                    {item.label}
+                    <ChevronDown
+                      aria-hidden="true"
+                      size={15}
+                      className={`transition-transform ${isNetworkingOpen ? "rotate-180" : ""}`}
+                    />
+                  </Button>
+                  <div
+                    className={`absolute top-full left-0 mt-2 min-w-48 origin-top-left rounded-lg border border-border bg-background p-1 shadow-lg transition-[transform,opacity,visibility] ${isNetworkingOpen ? "visible scale-100 opacity-100" : "invisible scale-95 opacity-0"}`}
+                    aria-hidden={!isNetworkingOpen}
+                  >
                     {item.items.map((child) => (
-                      <NavLink key={child.to} to={child.to} className={linkClass}>
+                      <NavLink
+                        key={child.to}
+                        to={child.to}
+                        className={({ isActive: childIsActive }) =>
+                          `block rounded-md px-3 py-2 text-sm transition-colors ${childIsActive ? "bg-muted text-foreground" : "text-muted-foreground hover:bg-muted hover:text-foreground"}`
+                        }
+                        onClick={() => setIsNetworkingOpen(false)}
+                      >
                         {child.label}
                       </NavLink>
                     ))}
@@ -151,14 +204,28 @@ export function SiteHeader() {
           <div role="menu" className="flex w-full flex-col gap-2">
             {navigation.map((item) => {
               if ("items" in item) {
+                const isActive = isGroupActive(item.items, pathname)
+
                 return (
                   <div className="border-t border-border pt-4" key={item.label}>
-                    <p
-                      className={`px-0 py-2 text-sm font-medium tracking-[0.16em] text-muted-foreground uppercase ${isGroupActive(item.items, pathname) ? "text-foreground" : ""}`}
+                    <button
+                      type="button"
+                      aria-expanded={isNetworkingOpen}
+                      className={`flex w-full items-center justify-between px-0 py-2 text-sm font-medium tracking-[0.16em] text-muted-foreground uppercase ${isActive ? "text-foreground" : ""}`}
+                      onClick={() => setIsNetworkingOpen((open) => !open)}
                     >
-                      {item.label}
-                    </p>
-                    <div className="flex flex-col gap-2 pl-4">
+                      <span>{item.label}</span>
+                      <ChevronDown
+                        aria-hidden="true"
+                        size={18}
+                        className={`transition-transform ${isNetworkingOpen ? "rotate-180" : ""}`}
+                      />
+                    </button>
+                    <div
+                      className={`grid transition-[grid-template-rows,opacity] duration-200 ${isNetworkingOpen ? "grid-rows-[1fr] opacity-100" : "grid-rows-[0fr] opacity-0"}`}
+                      aria-hidden={!isNetworkingOpen}
+                    >
+                      <div className="flex min-h-0 flex-col gap-2 overflow-hidden pl-4">
                       {item.items.map((child) => (
                         <NavLink
                           key={child.to}
@@ -173,6 +240,7 @@ export function SiteHeader() {
                           <span className="text-2xl leading-none text-foreground/70">›</span>
                         </NavLink>
                       ))}
+                      </div>
                     </div>
                   </div>
                 )
