@@ -17,8 +17,8 @@ export const meta: MetaFunction = () => [
 
 export default function DnsCheckerRoute() {
   const { results, isLoading, error, lookup } = useDnsChecker()
-  const [domain, setDomain] = useState("example.com")
-  const [recordType, setRecordType] = useState<DnsRecordType>("A")
+  const [domain, setDomain] = useState("")
+  const [recordType, setRecordType] = useState<DnsRecordType | "">("")
 
   return (
     <div className="mx-auto w-full max-w-6xl px-5 py-10 lg:px-8 lg:py-16">
@@ -30,7 +30,11 @@ export default function DnsCheckerRoute() {
           isLoading={isLoading}
           onValueChange={setDomain}
           onRecordTypeChange={setRecordType}
-          onSubmit={() => lookup(domain, recordType)}
+          onSubmit={() => {
+            const cleanDomain = domain.trim()
+            if (!cleanDomain || !recordType) return
+            lookup(cleanDomain, recordType)
+          }}
         />
         {error ? (
           <div className="border border-destructive/40 bg-destructive/5 p-4 text-sm text-destructive">

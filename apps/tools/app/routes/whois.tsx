@@ -16,7 +16,7 @@ export const meta: MetaFunction = () => [
 
 export default function WhoisRoute() {
   const { result, isLoading, error, lookup } = useRdapLookup()
-  const [domain, setDomain] = useState("example.com")
+  const [domain, setDomain] = useState("")
 
   return (
     <div className="mx-auto w-full max-w-6xl px-5 py-10 lg:px-8 lg:py-16">
@@ -26,7 +26,11 @@ export default function WhoisRoute() {
           value={domain}
           isLoading={isLoading}
           onValueChange={setDomain}
-          onSubmit={() => lookup(domain)}
+          onSubmit={() => {
+            const cleanDomain = domain.trim()
+            if (!cleanDomain) return
+            lookup(cleanDomain)
+          }}
         />
         {error ? (
           <div className="border border-destructive/40 bg-destructive/5 p-4 text-sm text-destructive">

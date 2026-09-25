@@ -1,21 +1,41 @@
 import { Menu, X } from "lucide-react"
 import { Button } from "@sawit/ui/components/button"
 import { useEffect, useRef, useState } from "react"
-import { NavLink } from "react-router"
+import { NavLink, useLocation } from "react-router"
 import { ThemeToggle } from "../theme/theme-toggle"
 
-const navigation = [
+type NavigationLink = {
+  label: string
+  to: string
+}
+
+type NavigationGroup = {
+  label: string
+  items: NavigationLink[]
+}
+
+const navigation: Array<NavigationLink | NavigationGroup> = [
   { label: "Home", to: "/" },
-  { label: "DNS Checker", to: "/dns-checker" },
-  { label: "WHOIS / RDAP", to: "/whois" },
+  {
+    label: "Networking",
+    items: [
+      { label: "DNS Checker", to: "/dns-checker" },
+      { label: "WHOIS / RDAP", to: "/whois" },
+    ],
+  },
 ]
 
 function linkClass({ isActive }: { isActive: boolean }) {
   return `text-sm transition-colors ${isActive ? "text-foreground" : "text-muted-foreground hover:text-foreground"}`
 }
 
+function isGroupActive(items: { to: string }[], pathname: string) {
+  return items.some((item) => pathname === item.to)
+}
+
 export function SiteHeader() {
   const [isOpen, setIsOpen] = useState(false)
+  const { pathname } = useLocation()
   const menuButtonRef = useRef<HTMLButtonElement>(null)
   const mobileNavRef = useRef<HTMLElement>(null)
   const wasOpenRef = useRef(false)
@@ -72,11 +92,28 @@ export function SiteHeader() {
         </NavLink>
 
         <nav className="hidden items-center gap-7 md:flex" aria-label="Main navigation">
-          {navigation.map((item) => (
-            <NavLink key={item.to} to={item.to} className={linkClass}>
-              {item.label}
-            </NavLink>
-          ))}
+          {navigation.map((item) => {
+            if ("items" in item) {
+              return (
+                <div className="flex items-center gap-4" key={item.label}>
+                  <span className="text-sm text-muted-foreground">{item.label}</span>
+                  <div className="flex items-center gap-4 border-l border-border pl-4">
+                    {item.items.map((child) => (
+                      <NavLink key={child.to} to={child.to} className={linkClass}>
+                        {child.label}
+                      </NavLink>
+                    ))}
+                  </div>
+                </div>
+              )
+            }
+
+            return (
+              <NavLink key={item.to} to={item.to} className={linkClass}>
+                {item.label}
+              </NavLink>
+            )
+          })}
         </nav>
 
         <div className="flex items-center gap-2">
@@ -112,20 +149,50 @@ export function SiteHeader() {
           className="flex h-full flex-col justify-start bg-background px-5 pt-6 pb-8"
         >
           <div role="menu" className="flex w-full flex-col gap-2">
-            {navigation.map((item) => (
-              <NavLink
-                key={item.to}
-                to={item.to}
-                role="menuitem"
-                className={({ isActive }) =>
-                  `flex items-center justify-between py-3 text-[clamp(2rem,7vw,3.5rem)] leading-none transition-colors ${isActive ? "text-foreground" : "text-foreground/90"}`
-                }
-                onClick={() => setIsOpen(false)}
-              >
-                <span>{item.label}</span>
-                <span className="text-2xl leading-none text-foreground/70">›</span>
-              </NavLink>
-            ))}
+            {navigation.map((item) => {
+              if ("items" in item) {
+                return (
+                  <div className="border-t border-border pt-4" key={item.label}>
+                    <p
+                      className={`px-0 py-2 text-sm font-medium tracking-[0.16em] text-muted-foreground uppercase ${isGroupActive(item.items, pathname) ? "text-foreground" : ""}`}
+                    >
+                      {item.label}
+                    </p>
+                    <div className="flex flex-col gap-2 pl-4">
+                      {item.items.map((child) => (
+                        <NavLink
+                          key={child.to}
+                          to={child.to}
+                          role="menuitem"
+                          className={({ isActive }) =>
+                            `flex items-center justify-between py-3 text-[clamp(1.75rem,6vw,3rem)] leading-none transition-colors ${isActive ? "text-foreground" : "text-foreground/90"}`
+                          }
+                          onClick={() => setIsOpen(false)}
+                        >
+                          <span>{child.label}</span>
+                          <span className="text-2xl leading-none text-foreground/70">›</span>
+                        </NavLink>
+                      ))}
+                    </div>
+                  </div>
+                )
+              }
+
+              return (
+                <NavLink
+                  key={item.to}
+                  to={item.to}
+                  role="menuitem"
+                  className={({ isActive }) =>
+                    `flex items-center justify-between py-3 text-[clamp(2rem,7vw,3.5rem)] leading-none transition-colors ${isActive ? "text-foreground" : "text-foreground/90"}`
+                  }
+                  onClick={() => setIsOpen(false)}
+                >
+                  <span>{item.label}</span>
+                  <span className="text-2xl leading-none text-foreground/70">›</span>
+                </NavLink>
+              )
+            })}
           </div>
         </nav>
       </div>

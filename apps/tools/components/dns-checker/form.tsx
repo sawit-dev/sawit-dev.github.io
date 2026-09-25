@@ -1,13 +1,21 @@
 import { Button } from "@sawit/ui/components/button"
+import {
+  Combobox,
+  ComboboxContent,
+  ComboboxEmpty,
+  ComboboxInput,
+  ComboboxItem,
+  ComboboxList,
+} from "@sawit/ui/components/combobox"
 import { Input } from "@sawit/ui/components/input"
 import type { DnsRecordType } from "@sawit/networking/dns"
 
 type DnsCheckerFormProps = {
   value: string
-  recordType: DnsRecordType
+  recordType: DnsRecordType | ""
   isLoading: boolean
   onValueChange: (value: string) => void
-  onRecordTypeChange: (value: DnsRecordType) => void
+  onRecordTypeChange: (value: DnsRecordType | "") => void
   onSubmit: () => void
 }
 
@@ -34,18 +42,28 @@ export function DnsCheckerForm({
         value={value}
         onChange={(event) => onValueChange(event.target.value)}
       />
-      <select
-        aria-label="DNS record type"
-        className="h-10 border border-input bg-background px-3 text-sm"
+      <Combobox
         value={recordType}
-        onChange={(event) => onRecordTypeChange(event.target.value as DnsRecordType)}
+        onValueChange={(value) => onRecordTypeChange(value as DnsRecordType)}
       >
-        {(["A", "AAAA", "CNAME", "MX", "NS", "TXT"] as const).map((type) => (
-          <option key={type} value={type}>
-            {type}
-          </option>
-        ))}
-      </select>
+        <ComboboxInput
+          aria-label="DNS record type"
+          className="h-10 w-full sm:w-36"
+          placeholder="Record type"
+        />
+        <ComboboxContent>
+          <ComboboxList>
+            <ComboboxEmpty>No record type found.</ComboboxEmpty>
+            {(["A", "AAAA", "CNAME", "MX", "NS", "TXT"] as const).map(
+              (type) => (
+                <ComboboxItem key={type} value={type}>
+                  {type}
+                </ComboboxItem>
+              )
+            )}
+          </ComboboxList>
+        </ComboboxContent>
+      </Combobox>
       <Button disabled={isLoading} type="submit" className="h-10">
         {isLoading ? "Checking..." : "Check DNS"}
       </Button>
