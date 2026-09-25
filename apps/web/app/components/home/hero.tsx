@@ -1,4 +1,5 @@
 import { ArrowDown, ArrowUpRight, Code2 } from "lucide-react"
+import { Button } from "@workspace/ui/components/button"
 import { Link } from "react-router"
 
 export function HomeHero() {
@@ -19,19 +20,13 @@ export function HomeHero() {
             experiments, and the ideas that become worth sharing.
           </p>
           <div className="mt-9 flex flex-wrap items-center gap-3">
-            <Link
-              className="inline-flex h-9 items-center gap-2 bg-primary px-3 text-sm font-medium text-primary-foreground transition-colors hover:bg-primary/80"
-              to="/projects"
-            >
+            <Button render={<Link to="/projects" />}>
               Explore projects
               <ArrowUpRight aria-hidden="true" size={16} />
-            </Link>
-            <Link
-              className="inline-flex h-9 items-center gap-2 border border-border bg-background px-3 text-sm font-medium transition-colors hover:bg-muted"
-              to="/about"
-            >
+            </Button>
+            <Button render={<Link to="/about" />} variant="outline">
               About the practice
-            </Link>
+            </Button>
           </div>
         </div>
         <div className="flex items-end lg:justify-end">

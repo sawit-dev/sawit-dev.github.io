@@ -1,4 +1,5 @@
 import { Menu, X } from "lucide-react"
+import { Button } from "@workspace/ui/components/button"
 import { useState } from "react"
 import { NavLink } from "react-router"
 
@@ -39,9 +40,11 @@ export function SiteHeader() {
             </NavLink>
           ))}
         </nav>
-        <button
+        <Button
           type="button"
-          className="flex size-9 items-center justify-center border border-border md:hidden"
+          variant="outline"
+          size="icon"
+          className="md:hidden"
           aria-label={isOpen ? "Close navigation" : "Open navigation"}
           aria-expanded={isOpen}
           onClick={() => setIsOpen((open) => !open)}
@@ -51,7 +54,7 @@ export function SiteHeader() {
           ) : (
             <Menu aria-hidden="true" size={18} />
           )}
-        </button>
+        </Button>
       </div>
       {isOpen && (
         <nav

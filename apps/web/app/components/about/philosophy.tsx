@@ -1,4 +1,5 @@
 import { BookOpen, HeartHandshake, Layers3 } from "lucide-react"
+import { Card, CardContent } from "@workspace/ui/components/card"
 
 const values = [
   {
@@ -32,13 +33,15 @@ export function DevelopmentPhilosophy() {
         </div>
         <div className="grid gap-px border border-border bg-border md:grid-cols-3">
           {values.map(({ icon: Icon, title, text }) => (
-            <article key={title} className="bg-background p-5">
-              <Icon aria-hidden="true" className="text-primary" size={20} />
-              <h3 className="mt-12 font-medium">{title}</h3>
-              <p className="mt-3 text-sm leading-6 text-muted-foreground">
-                {text}
-              </p>
-            </article>
+            <Card key={title} className="bg-background p-0">
+              <CardContent className="p-5">
+                <Icon aria-hidden="true" className="text-primary" size={20} />
+                <h3 className="mt-12 font-medium">{title}</h3>
+                <p className="mt-3 text-sm leading-6 text-muted-foreground">
+                  {text}
+                </p>
+              </CardContent>
+            </Card>
           ))}
         </div>
       </div>

@@ -1,4 +1,5 @@
 import { Blocks, Compass, Workflow } from "lucide-react"
+import { Card, CardContent } from "@workspace/ui/components/card"
 
 const principles = [
   {
@@ -38,13 +39,15 @@ export function HomeOverview() {
           </p>
           <div className="mt-10 grid gap-px border border-border bg-border sm:grid-cols-3">
             {principles.map(({ icon: Icon, title, text }) => (
-              <article key={title} className="bg-background p-5">
-                <Icon aria-hidden="true" className="text-primary" size={20} />
-                <h3 className="mt-8 font-medium">{title}</h3>
-                <p className="mt-3 text-sm leading-6 text-muted-foreground">
-                  {text}
-                </p>
-              </article>
+              <Card key={title} className="bg-background p-0">
+                <CardContent className="p-5">
+                  <Icon aria-hidden="true" className="text-primary" size={20} />
+                  <h3 className="mt-8 font-medium">{title}</h3>
+                  <p className="mt-3 text-sm leading-6 text-muted-foreground">
+                    {text}
+                  </p>
+                </CardContent>
+              </Card>
             ))}
           </div>
         </div>

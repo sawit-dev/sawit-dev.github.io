@@ -1,6 +1,7 @@
 import { ArrowUpRight } from "lucide-react"
 import { Link } from "react-router"
 import { projects } from "../../lib/projects"
+import { ProjectCard } from "../projects/project-card"
 
 export function FeaturedProjects() {
   return (
@@ -23,33 +24,9 @@ export function FeaturedProjects() {
             <ArrowUpRight aria-hidden="true" size={15} />
           </Link>
         </div>
-        <div className="mt-10 grid gap-px border border-border bg-border md:grid-cols-3">
+        <div className="mt-10 grid gap-3 md:grid-cols-3">
           {projects.map((project, index) => (
-            <a
-              key={project.name}
-              className="group bg-background p-5 transition-colors hover:bg-muted"
-              href={project.href}
-              target="_blank"
-              rel="noreferrer"
-            >
-              <div className="flex items-center justify-between font-mono text-xs text-muted-foreground">
-                <span>0{index + 1}</span>
-                <ArrowUpRight
-                  aria-hidden="true"
-                  className="transition-transform group-hover:translate-x-0.5 group-hover:-translate-y-0.5"
-                  size={16}
-                />
-              </div>
-              <h3 className="mt-16 font-heading text-xl font-medium">
-                {project.name}
-              </h3>
-              <p className="mt-3 text-sm leading-6 text-muted-foreground">
-                {project.description}
-              </p>
-              <p className="mt-8 font-mono text-[11px] tracking-[0.12em] text-primary uppercase">
-                {project.status}
-              </p>
-            </a>
+            <ProjectCard key={project.name} project={project} index={index} />
           ))}
         </div>
       </div>

@@ -1,4 +1,5 @@
 import { Braces, Layers3, Terminal } from "lucide-react"
+import { Card, CardContent } from "@workspace/ui/components/card"
 
 const tools = [
   { icon: Braces, label: "TypeScript" },
@@ -25,16 +26,18 @@ export function TechnologyStack() {
         </div>
         <div className="grid grid-cols-3 gap-2">
           {tools.map(({ icon: Icon, label }) => (
-            <div key={label} className="border border-border p-4 text-center">
-              <Icon
-                aria-hidden="true"
-                className="mx-auto text-primary"
-                size={19}
-              />
-              <p className="mt-4 text-xs leading-5 text-muted-foreground">
-                {label}
-              </p>
-            </div>
+            <Card key={label} className="bg-background p-0 text-center">
+              <CardContent className="p-4">
+                <Icon
+                  aria-hidden="true"
+                  className="mx-auto text-primary"
+                  size={19}
+                />
+                <p className="mt-4 text-xs leading-5 text-muted-foreground">
+                  {label}
+                </p>
+              </CardContent>
+            </Card>
           ))}
         </div>
       </div>
