@@ -4,6 +4,7 @@ export type Theme = "dark" | "light" | "system"
 
 export type ThemeProviderState = {
   theme: Theme
+  isHydrated: boolean
   setTheme: (theme: Theme) => void
 }
 
@@ -34,16 +35,16 @@ export function useThemePreference(
   defaultTheme: Theme = "system",
   storageKey = "sawit-dev-theme"
 ) {
-  const [theme, setThemeState] = React.useState<Theme>(
-    () => getStoredTheme(storageKey) ?? defaultTheme
-  )
+  const [theme, setThemeState] = React.useState<Theme>(defaultTheme)
+  const [isHydrated, setIsHydrated] = React.useState(false)
 
   React.useEffect(() => {
     const storedTheme = getStoredTheme(storageKey)
-    if (storedTheme && storedTheme !== theme) {
+    if (storedTheme) {
       setThemeState(storedTheme)
     }
-  }, [storageKey, theme])
+    setIsHydrated(true)
+  }, [storageKey])
 
   React.useEffect(() => {
     const root = window.document.documentElement
@@ -69,7 +70,7 @@ export function useThemePreference(
     setThemeState(nextTheme)
   }
 
-  return { theme, setTheme }
+  return { theme, isHydrated, setTheme }
 }
 
 export function useTheme() {

@@ -10,7 +10,7 @@ const themes: { value: Theme; label: string; icon: typeof Monitor }[] = [
 ]
 
 export function ThemeToggle() {
-  const { theme, setTheme } = useTheme()
+  const { theme, isHydrated, setTheme } = useTheme()
 
   return (
     <div
@@ -26,7 +26,7 @@ export function ThemeToggle() {
           key={value}
           type="button"
           onClick={() => setTheme(value)}
-          aria-pressed={theme === value}
+          aria-pressed={isHydrated && theme === value}
           aria-label={label}
           title={label}
           className={cn(

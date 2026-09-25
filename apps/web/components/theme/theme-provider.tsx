@@ -19,10 +19,13 @@ export function ThemeProvider({
   defaultTheme = "system",
   storageKey = "sawit-dev-theme",
 }: ThemeProviderProps) {
-  const { theme, setTheme } = useThemePreference(defaultTheme, storageKey)
+  const { theme, isHydrated, setTheme } = useThemePreference(
+    defaultTheme,
+    storageKey
+  )
 
   return (
-    <ThemeProviderContext.Provider value={{ theme, setTheme }}>
+    <ThemeProviderContext.Provider value={{ theme, isHydrated, setTheme }}>
       {children}
     </ThemeProviderContext.Provider>
   )
