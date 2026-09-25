@@ -12,6 +12,19 @@ import { SiteShell } from "./components/layout/site-shell"
 import { ThemeProvider } from "./components/theme/theme-provider"
 import "@workspace/ui/globals.css"
 
+const themeBootstrapScript = `
+  (() => {
+    const storedTheme = window.localStorage.getItem("sawit-dev-theme")
+    const theme = ["light", "dark", "system"].includes(storedTheme)
+      ? storedTheme
+      : "system"
+    const resolvedTheme = theme === "system"
+      ? (window.matchMedia("(prefers-color-scheme: dark)").matches ? "dark" : "light")
+      : theme
+    document.documentElement.classList.add(resolvedTheme)
+  })()
+`
+
 export function Layout({ children }: { children: React.ReactNode }) {
   return (
     <html lang="en">
@@ -20,6 +33,7 @@ export function Layout({ children }: { children: React.ReactNode }) {
         <meta name="viewport" content="width=device-width, initial-scale=1" />
         <Meta />
         <Links />
+        <script dangerouslySetInnerHTML={{ __html: themeBootstrapScript }} />
       </head>
       <body className="font-sans antialiased">
         <ThemeProvider>
