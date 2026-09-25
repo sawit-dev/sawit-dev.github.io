@@ -1,4 +1,4 @@
-import { ChevronDown, Menu, X } from "lucide-react"
+import { ArrowUpRight, ChevronDown, Menu, X } from "lucide-react"
 import { Button } from "@sawit/ui/components/button"
 import { useEffect, useRef, useState } from "react"
 import { NavLink, useLocation } from "react-router"
@@ -7,10 +7,12 @@ import { ThemeToggle } from "../theme/theme-toggle"
 type NavigationLink = {
   label: string
   to: string
+  description?: string
 }
 
 type NavigationGroup = {
   label: string
+  description: string
   items: NavigationLink[]
 }
 
@@ -18,16 +20,22 @@ const navigation: Array<NavigationLink | NavigationGroup> = [
   { label: "Home", to: "/" },
   {
     label: "Networking",
+    description:
+      "Practical tools for exploring DNS and domain registration data.",
     items: [
-      { label: "DNS Checker", to: "/dns-checker" },
-      { label: "WHOIS / RDAP", to: "/whois" },
+      {
+        label: "DNS Checker",
+        to: "/dns-checker",
+        description: "Inspect records, nameservers, and resolver responses.",
+      },
+      {
+        label: "WHOIS / RDAP",
+        to: "/whois",
+        description: "Look up registration and network allocation details.",
+      },
     ],
   },
 ]
-
-const networkingNavigation = navigation.find(
-  (item): item is NavigationGroup => "items" in item
-)
 
 function linkClass({ isActive }: { isActive: boolean }) {
   return `text-sm transition-colors ${isActive ? "text-foreground" : "text-muted-foreground hover:text-foreground"}`
@@ -39,12 +47,10 @@ function isGroupActive(items: { to: string }[], pathname: string) {
 
 export function SiteHeader() {
   const [isOpen, setIsOpen] = useState(false)
+  const [openGroup, setOpenGroup] = useState<string | null>(null)
   const { pathname } = useLocation()
-  const [isNetworkingOpen, setIsNetworkingOpen] = useState(() =>
-    networkingNavigation ? isGroupActive(networkingNavigation.items, pathname) : false
-  )
   const menuButtonRef = useRef<HTMLButtonElement>(null)
-  const desktopGroupRef = useRef<HTMLDivElement>(null)
+  const headerRef = useRef<HTMLElement>(null)
   const mobileNavRef = useRef<HTMLElement>(null)
   const wasOpenRef = useRef(false)
   const mobileMenuId = "mobile-navigation"
@@ -53,7 +59,7 @@ export function SiteHeader() {
     function handleEscape(event: KeyboardEvent) {
       if (event.key === "Escape") {
         setIsOpen(false)
-        setIsNetworkingOpen(false)
+        setOpenGroup(null)
       }
     }
 
@@ -64,27 +70,31 @@ export function SiteHeader() {
   useEffect(() => {
     function handlePointerDown(event: PointerEvent) {
       if (
-        isNetworkingOpen &&
-        desktopGroupRef.current &&
-        !desktopGroupRef.current.contains(event.target as Node)
+        openGroup &&
+        headerRef.current &&
+        !headerRef.current.contains(event.target as Node)
       ) {
-        setIsNetworkingOpen(false)
+        setOpenGroup(null)
       }
     }
 
     document.addEventListener("pointerdown", handlePointerDown)
     return () => document.removeEventListener("pointerdown", handlePointerDown)
-  }, [isNetworkingOpen])
+  }, [openGroup])
 
   useEffect(() => {
     const mediaQuery = window.matchMedia("(min-width: 768px)")
 
     function handleBreakpointChange(event: MediaQueryListEvent) {
-      if (event.matches) setIsOpen(false)
+      if (event.matches) {
+        setIsOpen(false)
+        setOpenGroup(null)
+      }
     }
 
     mediaQuery.addEventListener("change", handleBreakpointChange)
-    return () => mediaQuery.removeEventListener("change", handleBreakpointChange)
+    return () =>
+      mediaQuery.removeEventListener("change", handleBreakpointChange)
   }, [])
 
   useEffect(() => {
@@ -105,58 +115,100 @@ export function SiteHeader() {
     }
   }, [isOpen])
 
+  useEffect(() => {
+    setOpenGroup(null)
+  }, [pathname])
+
   return (
-    <header className="relative z-50 border-b border-border/70 bg-background">
+    <header
+      ref={headerRef}
+      className="relative z-50 border-b border-border/70 bg-background"
+    >
       <div className="mx-auto flex h-16 max-w-6xl items-center justify-between px-5 lg:px-8">
         <NavLink
           to="/"
           className="flex items-center gap-3 text-sm font-semibold tracking-tight"
-          onClick={() => setIsOpen(false)}
+          onClick={() => {
+            setIsOpen(false)
+            setOpenGroup(null)
+          }}
         >
           <img src="/logo.svg" alt="Sawit Dev" className="size-8" />
           <span>Sawit Dev</span>
         </NavLink>
 
-        <nav className="hidden items-center gap-7 md:flex" aria-label="Main navigation">
+        <nav
+          className="hidden items-center gap-7 md:flex"
+          aria-label="Main navigation"
+        >
           {navigation.map((item) => {
             if ("items" in item) {
               const isActive = isGroupActive(item.items, pathname)
+              const isGroupOpen = openGroup === item.label
+              const menuId = `${item.label.toLowerCase()}-menu`
 
               return (
-                <div className="relative" key={item.label} ref={desktopGroupRef}>
+                <div className="relative" key={item.label}>
                   <Button
                     type="button"
                     variant="ghost"
                     size="sm"
-                    aria-expanded={isNetworkingOpen}
+                    aria-expanded={isGroupOpen}
                     aria-haspopup="menu"
+                    aria-controls={menuId}
                     className={`gap-1 px-1 text-sm font-normal ${isActive ? "text-foreground" : "text-muted-foreground"}`}
-                    onClick={() => setIsNetworkingOpen((open) => !open)}
+                    onClick={() =>
+                      setOpenGroup(isGroupOpen ? null : item.label)
+                    }
                   >
                     {item.label}
                     <ChevronDown
                       aria-hidden="true"
                       size={15}
-                      className={`transition-transform ${isNetworkingOpen ? "rotate-180" : ""}`}
+                      className={`transition-transform ${isGroupOpen ? "rotate-180" : ""}`}
                     />
                   </Button>
-                  <div
-                    className={`absolute top-full left-0 mt-2 min-w-48 origin-top-left rounded-lg border border-border bg-background p-1 shadow-lg transition-[transform,opacity,visibility] ${isNetworkingOpen ? "visible scale-100 opacity-100" : "invisible scale-95 opacity-0"}`}
-                    aria-hidden={!isNetworkingOpen}
-                  >
-                    {item.items.map((child) => (
-                      <NavLink
-                        key={child.to}
-                        to={child.to}
-                        className={({ isActive: childIsActive }) =>
-                          `block rounded-md px-3 py-2 text-sm transition-colors ${childIsActive ? "bg-muted text-foreground" : "text-muted-foreground hover:bg-muted hover:text-foreground"}`
-                        }
-                        onClick={() => setIsNetworkingOpen(false)}
-                      >
-                        {child.label}
-                      </NavLink>
-                    ))}
-                  </div>
+                  {isGroupOpen ? (
+                    <div
+                      id={menuId}
+                      role="menu"
+                      className="absolute top-full left-1/2 mt-4 w-[min(42rem,calc(100vw-2rem))] -translate-x-1/2 rounded-xl border border-border bg-background p-3 shadow-xl"
+                    >
+                      <div className="border-b border-border px-3 pb-3">
+                        <p className="text-xs font-medium tracking-[0.18em] text-muted-foreground uppercase">
+                          {item.label}
+                        </p>
+                        <p className="mt-1 max-w-lg text-sm text-muted-foreground">
+                          {item.description}
+                        </p>
+                      </div>
+                      <div className="grid gap-1 pt-2 sm:grid-cols-2">
+                        {item.items.map((child) => (
+                          <NavLink
+                            key={child.to}
+                            to={child.to}
+                            role="menuitem"
+                            className={({ isActive: childIsActive }) =>
+                              `group rounded-lg p-3 transition-colors ${childIsActive ? "bg-muted" : "hover:bg-muted"}`
+                            }
+                            onClick={() => setOpenGroup(null)}
+                          >
+                            <span className="flex items-center justify-between gap-3 text-sm font-medium text-foreground">
+                              {child.label}
+                              <ArrowUpRight
+                                aria-hidden="true"
+                                size={15}
+                                className="text-muted-foreground transition-transform group-hover:translate-x-0.5 group-hover:-translate-y-0.5"
+                              />
+                            </span>
+                            <span className="mt-1 block text-xs leading-5 text-muted-foreground">
+                              {child.description}
+                            </span>
+                          </NavLink>
+                        ))}
+                      </div>
+                    </div>
+                  ) : null}
                 </div>
               )
             }
@@ -180,9 +232,18 @@ export function SiteHeader() {
             aria-label={isOpen ? "Close navigation" : "Open navigation"}
             aria-expanded={isOpen}
             aria-controls={mobileMenuId}
-            onClick={() => setIsOpen((open) => !open)}
+            onClick={() => {
+              setIsOpen((open) => {
+                if (open) setOpenGroup(null)
+                return !open
+              })
+            }}
           >
-            {isOpen ? <X aria-hidden="true" size={18} /> : <Menu aria-hidden="true" size={18} />}
+            {isOpen ? (
+              <X aria-hidden="true" size={18} />
+            ) : (
+              <Menu aria-hidden="true" size={18} />
+            )}
           </Button>
         </div>
       </div>
@@ -205,41 +266,70 @@ export function SiteHeader() {
             {navigation.map((item) => {
               if ("items" in item) {
                 const isActive = isGroupActive(item.items, pathname)
+                const isGroupOpen = openGroup === item.label
+                const mobileGroupId = `mobile-${item.label.toLowerCase()}-menu`
 
                 return (
-                  <div className="border-t border-border pt-4" key={item.label}>
+                  <div className="py-5" key={item.label}>
                     <button
                       type="button"
-                      aria-expanded={isNetworkingOpen}
-                      className={`flex w-full items-center justify-between px-0 py-2 text-sm font-medium tracking-[0.16em] text-muted-foreground uppercase ${isActive ? "text-foreground" : ""}`}
-                      onClick={() => setIsNetworkingOpen((open) => !open)}
+                      aria-expanded={isGroupOpen}
+                      aria-controls={mobileGroupId}
+                      className="flex w-full items-start justify-between gap-4 text-left"
+                      onClick={() =>
+                        setOpenGroup(isGroupOpen ? null : item.label)
+                      }
                     >
-                      <span>{item.label}</span>
-                      <ChevronDown
-                        aria-hidden="true"
-                        size={18}
-                        className={`transition-transform ${isNetworkingOpen ? "rotate-180" : ""}`}
-                      />
+                      <span>
+                        <span
+                          className={`block text-xl font-medium ${isActive ? "text-foreground" : "text-foreground/90"}`}
+                        >
+                          {item.label}
+                        </span>
+                        <span className="mt-1 block max-w-xs text-sm leading-5 text-muted-foreground">
+                          {item.description}
+                        </span>
+                      </span>
+                      <span className="mt-1 flex size-8 shrink-0 items-center justify-center rounded-full border border-border text-muted-foreground">
+                        <ChevronDown
+                          aria-hidden="true"
+                          size={17}
+                          className={`transition-transform ${isGroupOpen ? "rotate-180" : ""}`}
+                        />
+                      </span>
                     </button>
                     <div
-                      className={`grid transition-[grid-template-rows,opacity] duration-200 ${isNetworkingOpen ? "grid-rows-[1fr] opacity-100" : "grid-rows-[0fr] opacity-0"}`}
-                      aria-hidden={!isNetworkingOpen}
+                      id={mobileGroupId}
+                      className={`grid transition-[grid-template-rows,opacity] duration-200 ${isGroupOpen ? "grid-rows-[1fr] pt-4 opacity-100" : "grid-rows-[0fr] opacity-0"}`}
                     >
-                      <div className="flex min-h-0 flex-col gap-2 overflow-hidden pl-4">
-                      {item.items.map((child) => (
-                        <NavLink
-                          key={child.to}
-                          to={child.to}
-                          role="menuitem"
-                          className={({ isActive }) =>
-                            `flex items-center justify-between py-3 text-[clamp(1.75rem,6vw,3rem)] leading-none transition-colors ${isActive ? "text-foreground" : "text-foreground/90"}`
-                          }
-                          onClick={() => setIsOpen(false)}
-                        >
-                          <span>{child.label}</span>
-                          <span className="text-2xl leading-none text-foreground/70">›</span>
-                        </NavLink>
-                      ))}
+                      <div className="flex min-h-0 flex-col gap-2 overflow-hidden pl-1">
+                        {item.items.map((child) => (
+                          <NavLink
+                            key={child.to}
+                            to={child.to}
+                            className={({ isActive: childIsActive }) =>
+                              `group flex items-center justify-between gap-4 rounded-lg border border-border/70 px-4 py-3 transition-colors ${childIsActive ? "bg-muted" : "hover:bg-muted"}`
+                            }
+                            onClick={() => {
+                              setIsOpen(false)
+                              setOpenGroup(null)
+                            }}
+                          >
+                            <span>
+                              <span className="block text-base font-medium text-foreground">
+                                {child.label}
+                              </span>
+                              <span className="mt-1 block text-xs leading-5 text-muted-foreground">
+                                {child.description}
+                              </span>
+                            </span>
+                            <ArrowUpRight
+                              aria-hidden="true"
+                              size={17}
+                              className="shrink-0 text-muted-foreground"
+                            />
+                          </NavLink>
+                        ))}
                       </div>
                     </div>
                   </div>
@@ -254,10 +344,15 @@ export function SiteHeader() {
                   className={({ isActive }) =>
                     `flex items-center justify-between py-3 text-[clamp(2rem,7vw,3.5rem)] leading-none transition-colors ${isActive ? "text-foreground" : "text-foreground/90"}`
                   }
-                  onClick={() => setIsOpen(false)}
+                  onClick={() => {
+                    setIsOpen(false)
+                    setOpenGroup(null)
+                  }}
                 >
                   <span>{item.label}</span>
-                  <span className="text-2xl leading-none text-foreground/70">›</span>
+                  <span className="text-2xl leading-none text-foreground/70">
+                    ›
+                  </span>
                 </NavLink>
               )
             })}
