@@ -20,6 +20,21 @@ function formatTtl(ttl?: number) {
 
 export function DnsCheckerResults({ results }: { results: DnsLookupResult[] }) {
   const successfulResolvers = results.filter((result) => result.status === "success").length
+  const rawText = results
+    .map((result) => {
+      if (result.status !== "success" || result.answers.length === 0) {
+        return `${result.providerName}: ${result.error ?? "No matching records were returned."}`
+      }
+
+      const lines = result.answers.map(
+        (answer) =>
+          `${result.providerName} | ${recordTypeLabels[answer.type] ?? "DNS"} | ${answer.data} | TTL ${formatTtl(answer.ttl)}`
+      )
+
+      return lines.join("\n")
+    })
+    .filter(Boolean)
+    .join("\n\n")
 
   return (
     <section aria-label="DNS checker results" className="space-y-4">
@@ -35,50 +50,11 @@ export function DnsCheckerResults({ results }: { results: DnsLookupResult[] }) {
         </p>
       </div>
 
-      <article className="min-w-0 border border-border bg-card p-5">
-        <div className="space-y-5">
-          {results.map((result) => (
-            <div key={result.providerId} className="rounded-md border border-border p-4">
-              <div className="flex items-center justify-between gap-3">
-                <h3 className="font-medium">{result.providerName}</h3>
-                <span
-                  className={`font-mono text-[10px] tracking-[0.12em] uppercase ${result.status === "success" ? "text-emerald-600 dark:text-emerald-400" : "text-destructive"}`}
-                >
-                  {result.status === "success" ? "Responded" : "Unavailable"}
-                </span>
-              </div>
-
-              {result.status === "success" && result.answers.length > 0 ? (
-                <div className="mt-4 space-y-3">
-                  {result.answers.map((answer, index) => (
-                    <dl
-                      key={`${result.providerId}-${answer.data}-${index}`}
-                      className="rounded-md border border-border/80 bg-muted/20 p-3 text-sm"
-                    >
-                      <div className="grid gap-2 sm:grid-cols-[120px_1fr]">
-                        <dt className="text-muted-foreground">Record</dt>
-                        <dd className="font-mono text-xs">{recordTypeLabels[answer.type] ?? "DNS"}</dd>
-                      </div>
-                      <div className="mt-2 grid gap-2 sm:grid-cols-[120px_1fr]">
-                        <dt className="text-muted-foreground">Value</dt>
-                        <dd className="min-w-0 overflow-x-auto rounded-md border border-border/80 bg-muted/10 px-2 py-1.5 font-mono text-xs">
-                          <span className="block min-w-[220px] break-all">{answer.data}</span>
-                        </dd>
-                      </div>
-                      <div className="mt-2 grid gap-2 sm:grid-cols-[120px_1fr]">
-                        <dt className="text-muted-foreground">TTL</dt>
-                        <dd className="font-mono text-xs">{formatTtl(answer.ttl)}</dd>
-                      </div>
-                    </dl>
-                  ))}
-                </div>
-              ) : (
-                <p className="mt-4 text-sm text-muted-foreground">
-                  {result.error ?? "No matching records were returned."}
-                </p>
-              )}
-            </div>
-          ))}
+      <article className="border border-border bg-card p-5">
+        <div className="min-w-0 overflow-x-auto">
+          <pre className="font-mono text-[11px] leading-6 text-foreground whitespace-pre-wrap sm:text-xs">
+            {rawText}
+          </pre>
         </div>
       </article>
     </section>

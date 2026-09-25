@@ -79,6 +79,7 @@ function flattenEntries(
 
 export function WhoisDetails({ result }: WhoisDetailsProps) {
   const rows = flattenEntries(result)
+  const rawText = rows.map((row) => `${row.key}: ${row.value}`).join("\n")
 
   return (
     <section className="border border-border bg-card p-5">
@@ -89,22 +90,10 @@ export function WhoisDetails({ result }: WhoisDetailsProps) {
         {result.ldhName ?? result.handle ?? "Domain record"}
       </h2>
 
-      <div className="mt-6 min-w-0 overflow-hidden">
-        <dl className="space-y-2">
-          {rows.map((row) => (
-            <div
-              key={row.key}
-              className="grid gap-2 border-b border-border pb-2 last:border-b-0 sm:grid-cols-[minmax(180px,220px)_minmax(0,1fr)]"
-            >
-              <dt className="font-mono text-[10px] tracking-[0.12em] text-muted-foreground uppercase break-words">
-                {row.key}
-              </dt>
-              <dd className="min-w-0 max-w-full overflow-x-auto rounded-md border border-border/80 bg-muted/10 px-2 py-1.5 text-sm text-foreground whitespace-pre-wrap">
-                <span className="block min-w-[240px] break-all">{row.value}</span>
-              </dd>
-            </div>
-          ))}
-        </dl>
+      <div className="mt-6 min-w-0 overflow-x-auto">
+        <pre className="rounded-md border border-border bg-muted/10 p-3 font-mono text-[11px] leading-6 text-foreground whitespace-pre-wrap sm:text-xs">
+          {rawText}
+        </pre>
       </div>
     </section>
   )
